@@ -84,7 +84,7 @@ if address:
         folium.LayerControl(collapsed=False).add_to(m)
         folium_static(m, width=800)
 
-        m.save("StreetsIn" + address + ".html")
+        m.save("./Output/StreetsIn" + address + ".html")
         # Calculate the end time and time taken
         end = time.time()
         length = end - start
