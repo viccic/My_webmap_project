@@ -71,13 +71,12 @@ if address:
                 "fill": False,
             }
         ).add_to(m)
-
-        folium.LayerControl(collapsed=False).add_to(m)
-        folium_static(m, width=800)
         
         m.add_child(folium.ClickForMarker("<b>Lat:</b> ${lat}<br /><b>Lon:</b> ${lng}"))
-
         
+        folium.LayerControl(collapsed=False).add_to(m)
+        folium_static(m, width=800)
+                
         m.save("./Output/StreetsIn" + address + ".html")
 
         # Calculate the end time and time taken
