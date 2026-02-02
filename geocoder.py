@@ -39,20 +39,11 @@ if address:
             "Geocoded Coordinates: {}, {}".format(results[0], results[1]))
         m = folium.Map(location=results, zoom_start=13, control_scale=True, zoom_control=False)
 
-        # folium.Marker(
-        #     results,
-        #     popup=address,
-        #     icon=folium.Icon(color="green", icon="crosshairs", prefix="fa")
-        # ).add_to(m)
-
-
         # download/model a street network for some city then visualize it
         G = ox.graph_from_place(address, network_type='drive')
-        # fig, ax = ox.plot.plot_graph(G)
 
-        # # you can convert your graph to node and edge GeoPandas GeoDataFrames
+        # you can convert your graph to node and edge GeoPandas GeoDataFrames
         gdf_nodes, gdf_edges = ox.convert.graph_to_gdfs(G)
-        # gdf_edges.head()
 
         # extract OSM polygon
         gdf_polygon = ox.geocoder.geocode_to_gdf(address)
@@ -83,8 +74,12 @@ if address:
 
         folium.LayerControl(collapsed=False).add_to(m)
         folium_static(m, width=800)
+        
+        m.add_child(folium.ClickForMarker("<b>Lat:</b> ${lat}<br /><b>Lon:</b> ${lng}"))
 
+        
         m.save("./Output/StreetsIn" + address + ".html")
+
         # Calculate the end time and time taken
         end = time.time()
         length = end - start
@@ -95,13 +90,5 @@ if address:
     else:
         st.error("Request failed. No results.")
 
-
-
-# # gdf_edges["maxspeed"].apply(type).value_counts()
-#
-
-#
-# folium.plugins.Geocoder().add_to(m)
-#
 
 
