@@ -9,7 +9,7 @@ import osmnx as ox
 
 
 st.title("Victoria's Geocoder")
-st.markdown('This app uses the [OpenRouteService](https://openrouteservice.org) API to geocode a location and display the results on a map.')
+st.markdown('This app uses the [OpenRouteService](https://openrouteservice.org) API to geocode a location and display the OpenStreetMap streets of this location on a map.')
 address = st.text_input("Search...")
 
 ORS_API_KEY = 'eyJvcmciOiI1YjNjZTM1OTc4NTExMTAwMDFjZjYyNDgiLCJpZCI6ImJkYWNjYTRiMTM4NTQ1YzZiNTFkYzgwYTdlMTE4YzhlIiwiaCI6Im11cm11cjY0In0='
