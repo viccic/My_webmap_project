@@ -1,6 +1,3 @@
-import customtkinter
-import tkinterDnD
-from tkinter import filedialog
 import folium
 import folium.plugins
 import requests
@@ -91,6 +88,7 @@ if address:
 
     else:
         st.error("Request failed. No results.")
+
 
 
 
