@@ -76,8 +76,12 @@ if address:
         
         folium.LayerControl(collapsed=False).add_to(m)
         folium_static(m, width=800)
-                
+        
+        # Save page in html format
         m.save("./Output/StreetsIn" + address + ".html")
+        
+        # Save OSM street in geopackage format
+        ox.io.save_graph_geopackage(G, filepath="./Output/StreetsIn" + address + "_roadnetwork.gpkg")
 
         # Calculate the end time and time taken
         end = time.time()
