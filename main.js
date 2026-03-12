@@ -10,7 +10,7 @@ let map = L.map('map-canvas', {
   }),
   layers: [],
   center: [52.010, 4.36744],
-  zoom: 9,
+  zoom: 13,
 
 });
 map.attributionControl.setPrefix('');
