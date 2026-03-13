@@ -1,50 +1,48 @@
 <!doctype html>
-<html>
+<html lang="en">
 
 <head>
-    <meta charset="utf-8">
-    <title>Web map project</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>First WebMap</title>
 
-    <!-- Styling for map-canvas -->
-   
-    <link rel="stylesheet" href="styles.css">
+	<link rel="stylesheet" href="styles.css">
 
-    <!-- Including Leaflet CSS library -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.0/leaflet.css">
-
-    <!-- Including Bootstrap CSS file -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-
-    <!-- Including JQuery UI CSS file -->
-    <link rel="stylesheet" href="source/jquery-ui.min.css">
-
-    <!-- Including SIDEBAR CSS file -->
-    <link rel="stylesheet" href="plugins/sidebar/L.Control.Sidebar.css">
-
-    <!-- Including EASYBUTTON CSS file -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
-
-
-
-<!-- Including Leaflet JavaScript files -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.0/leaflet.js"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.0/leaflet-src.js"></script>
-
-    <!-- Including JQuery JavaScript file -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js"></script>
-
-    <!-- Including JQuery UI JavaScript file -->
-    <script src="source/jquery-ui.min.js"></script>
-
-    <!-- Including sidebar JavaScript file -->
-    <script src="plugins/sidebar/L.Control.Sidebar.js"></script>
-
-    <!-- Including EASYBUTTON JavaScript file -->
-    <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.0/leaflet.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<link rel="stylesheet" href="source/jquery-ui.min.css">
+	<link rel="stylesheet" href="plugins/sidebar/L.Control.Sidebar.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+	<link rel="stylesheet" href="https://ppete2.github.io/Leaflet.PolylineMeasure/Leaflet.PolylineMeasure.css" />
+	<link rel="stylesheet" href="plugins/mouseposition/L.Control.MousePosition.css">
+	<link rel="stylesheet" href="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.css"/>
+	<link rel="stylesheet" href="plugins/minimap/Control.MiniMap.min.css">
 	
-	<!-- Including Ajax JavaScript file -->
-	 <script src="plugins/ajax/leaflet.ajax.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.0/leaflet.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.0/leaflet-src.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js"></script>
+	<script src="source/jquery-ui.min.js"></script>
+	<script src="plugins/sidebar/L.Control.Sidebar.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
+	<script src="https://ppete2.github.io/Leaflet.PolylineMeasure/Leaflet.PolylineMeasure.js"></script>
+	<script src="plugins/mouseposition/L.Control.MousePosition.js"></script>
+	<script src="https://unpkg.com/@geoman-io/leaflet-geoman-free@latest/dist/leaflet-geoman.js"></script>
+	<script src="plugins/minimap/Control.MiniMap.min.js"></script>
+	<script src="plugins/ajax/leaflet.ajax.js"></script>
+
+	<style>
+		.bold {
+			font-weight: bold;
+			font-size: 16px;
+		}
+
+		.errorMsg {
+			padding: 0;
+			text-align: center;
+			background-color: darksalmon;
+		}
+	</style>
 
 
 </head>
@@ -55,72 +53,54 @@
     <div id="sidebar" class="col-md-3"></div>
 
     <script>
-	
-		var baseLayers;
-		var overlays;
+    var baseLayers;
+    var overlays = {};
 
-        // Creating the object of the map removing zoom control and leaflet logo (down right)
+    var mymap = L.map('mapdiv', {
+        center: [52.0061, 4.3702],
+        zoom: 14,
+        attributionControl: false,
+        zoomControl: false
+    });
 
-        var mymap = L.map('mapdiv', {
-            center: [52.0061, 4.3702],
-            zoom: 14,
-            attributionControl: false,
-            zoomControl: false
-        });
+    var openStreetMap = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 23 });
+    var CartoDB_Positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { maxZoom: 23 });
+    var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', { maxZoom: 23 });
+    var OpenTopoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { maxZoom: 23 });
 
+    openStreetMap.addTo(mymap);
 
-        // Making the map appear
+    var sidebar = L.control.sidebar('sidebar', { position: 'left' });
+    mymap.addControl(sidebar);
 
+    L.easyButton('glyphicon-transfer', function () {
+        sidebar.toggle();
+    }).addTo(mymap);
 
-        var openStreetMap =  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png?', {maxZoom:23});
+    baseLayers = {
+        "OSM": openStreetMap,
+        "CartoDB Positron": CartoDB_Positron,
+        "Esri Imagery": Esri_WorldImagery,
+        "Open Topo Map": OpenTopoMap
+    };
 
-        var CartoDB_Positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {maxZoom: 23});
+    var control_layers = L.control.layers(baseLayers, overlays).addTo(mymap);
 
-        var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {maxZoom: 23});
+    function style_roads(feature) {
+        return {
+            color: '#ff0000',
+            weight: 4
+        };
+    }
 
-        var Esri_WorldImagery_minimap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {maxZoom: 23});
+    var roads = L.geoJSON.ajax('data/StreetsInDelft_roadnetwork.geojson',{style:style_roads}).addTo(mymap);
 
-        var OpenTopoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 23
-                });
-
-        openStreetMap.addTo(mymap);
-
-
-        // Adding the following features into the map
-
-        //SIDEBAR
-        var sidebar = L.control.sidebar('sidebar', {position: 'left'});
-
-        mymap.addControl(sidebar);
-
-        //EASY BUTTON
-        L.easyButton('glyphicon-transfer', function(){
-           sidebar.toggle();
-        }).addTo(mymap);
-		
-		//LAYER CONTROL
-		baseLayers = {
-		    "OSM": openStreetMap,
-		    "CartoDB Positron": CartoDB_Positron,
-		    "Esri Imagery": Esri_WorldImagery,
-		    "Open Topo Map": OpenTopoMap
-		};
-
-		var control_layers =  L.control.layers(baseLayers, overlays).addTo(mymap);
-		
-        //ROADS
-        var roads = L.geoJSON.ajax('data/StreetsInDelft_roadnetwork.geojson',{style:style_roads}).addTo(mymap);
-		
-		
-		function style_pipelines(json) {
+       function style_roads(json) {
 			color = '#17202A';
 			return {color:color};
 		}
-        
-		control_layers.addOverlay(roads, "OSM roads");
-
-    </script>
+	  
+</script>
 
 </body>
 
