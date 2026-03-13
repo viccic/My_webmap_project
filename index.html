@@ -110,9 +110,15 @@
 		var control_layers =  L.control.layers(baseLayers, overlays).addTo(mymap);
 		
         //ROADS
-        var roads = L.geoJSON.ajax('data/StreetsInDelft_roadnetwork.geojson',{style:style_pipelines, onEachFeature:process_pipelines}).addTo(mymap);
+        var roads = L.geoJSON.ajax('data/StreetsInDelft_roadnetwork.geojson',{style:style_roads}).addTo(mymap);
+		
+		
+		function style_pipelines(json) {
+			color = '#17202A';
+			return {color:color};
+		}
         
-		control_layers.addOverlay(Roads, "OSM roads");
+		control_layers.addOverlay(roads, "OSM roads");
 
     </script>
 
