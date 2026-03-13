@@ -51,6 +51,56 @@
 
     <div id="sidebar" class="col-md-3"></div>
 
+    <script>
+
+        // a. Creating the object of the map removing zoom control and leaflet logo (down right)
+
+        var mymap = L.map('mapdiv', {
+            center: [23.78573, 90.44378],
+            zoom: 12,
+            attributionControl: false,
+            zoomControl: false
+        });
+
+
+
+        // b. Making the map appear
+
+        var GoogleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
+                                maxZoom: 23,
+                                subdomains:['mt0','mt1','mt2','mt3']
+                                });
+
+        var openStreetMap =  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png?', {maxZoom:23});
+
+        var CartoDB_Positron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {maxZoom: 23});
+
+        var Esri_WorldImagery = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {maxZoom: 23});
+
+        var Esri_WorldImagery_minimap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {maxZoom: 23});
+
+        var OpenTopoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 23
+                });
+
+        GoogleStreets.addTo(mymap);
+
+
+        //c. Adding the following features into the map
+
+        //SIDEBAR
+        var sidebar = L.control.sidebar('sidebar', {position: 'left'});
+
+        mymap.addControl(sidebar);
+
+        //EASY BUTTON
+        L.easyButton('glyphicon-transfer', function(){
+           sidebar.toggle();
+        }).addTo(mymap);
+        
+
+    </script>
+
 </body>
 
 </html>
