@@ -7,7 +7,7 @@
 
     <!-- Styling for map-canvas -->
    
-    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="styles.css">
 
     <!-- Including Leaflet CSS library -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.0/leaflet.css">
@@ -55,7 +55,7 @@
 
         // a. Creating the object of the map removing zoom control and leaflet logo (down right)
 
-        var mymap = L.map('mapdiv', {
+        var mymap = L.map('map-canvas', {
             center: [23.78573, 90.44378],
             zoom: 12,
             attributionControl: false,
