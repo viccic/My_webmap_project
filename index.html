@@ -4,28 +4,52 @@
 <head>
     <meta charset="utf-8">
     <title>Web map project</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
-        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
-        crossorigin="">
 
+    <!-- Styling for map-canvas -->
+   
     <link rel="stylesheet" href="main.css">
+
+    <!-- Including Leaflet CSS library -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.0/leaflet.css">
+
+    <!-- Including Bootstrap CSS file -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+    <!-- Including JQuery UI CSS file -->
+    <link rel="stylesheet" href="source/jquery-ui.min.css">
+
+    <!-- Including SIDEBAR CSS file -->
+    <link rel="stylesheet" href="plugins/sidebar/L.Control.Sidebar.css">
+
+    <!-- Including EASYBUTTON CSS file -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css">
+
+
+
+<!-- Including Leaflet JavaScript files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.0/leaflet.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.0/leaflet-src.js"></script>
+
+    <!-- Including JQuery JavaScript file -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js"></script>
+
+    <!-- Including JQuery UI JavaScript file -->
+    <script src="source/jquery-ui.min.js"></script>
+
+    <!-- Including sidebar JavaScript file -->
+    <script src="plugins/sidebar/L.Control.Sidebar.js"></script>
+
+    <!-- Including EASYBUTTON JavaScript file -->
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
+
 
 </head>
 
 <body>
     <div id="map-canvas"></div>
 
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
-        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
-        crossorigin=""></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.3.12/proj4.js"></script>
-    <script src="lib/proj4leaflet.js"></script>
-    <script src="lib/leaflet.wms.js"></script>
-
-    <script src="lib/geojson.wfs.js"></script>
-
-    <script src="main.js"></script>
+    <div id="sidebar" class="col-md-3"></div>
 
 </body>
 
