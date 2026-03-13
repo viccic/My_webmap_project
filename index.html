@@ -47,26 +47,29 @@
 </head>
 
 <body>
-    <div id="map-canvas"></div>
+    <div id="mapdiv"></div>
 
     <div id="sidebar" class="col-md-3"></div>
 
     <script>
+	
+		var baseLayers;
+		var overlays;
 
-        // a. Creating the object of the map removing zoom control and leaflet logo (down right)
+        // Creating the object of the map removing zoom control and leaflet logo (down right)
 
-        var mymap = L.map('map-canvas', {
-            center: [23.78573, 90.44378],
-            zoom: 12,
+        var mymap = L.map('mapdiv', {
+            center: [52.0061, 4.3702],
+            zoom: 14,
             attributionControl: false,
             zoomControl: false
         });
 
 
 
-        // b. Making the map appear
+        // Making the map appear
 
-        var GoogleStreets = L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
+        var GoogleStreets = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
                                 maxZoom: 23,
                                 subdomains:['mt0','mt1','mt2','mt3']
                                 });
@@ -86,7 +89,7 @@
         GoogleStreets.addTo(mymap);
 
 
-        //c. Adding the following features into the map
+        // Adding the following features into the map
 
         //SIDEBAR
         var sidebar = L.control.sidebar('sidebar', {position: 'left'});
@@ -97,6 +100,17 @@
         L.easyButton('glyphicon-transfer', function(){
            sidebar.toggle();
         }).addTo(mymap);
+		
+		//LAYER CONTROL
+		baseLayers = {
+		    "Google Streets": GoogleStreets,
+		    "OSM": openStreetMap,
+		    "CartoDB Positron": CartoDB_Positron,
+		    "Esri Imagery": Esri_WorldImagery,
+		    "Open Topo Map": OpenTopoMap
+		};
+
+		var control_layers =  L.control.layers(baseLayers, overlays).addTo(mymap);
         
 
     </script>
