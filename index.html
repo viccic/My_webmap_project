@@ -50,13 +50,49 @@
 <body>
     <div id="mapdiv"></div>
 
-    <div id="sidebar" class="col-md-3"></div>
+    <div id="sidebar" class="col-md-3">
+	
+	<!-- Road Part -->
+		<div id="divRoad" class="col-xs-12">
+
+			<!-- Adding space above the title "Road Information" -->
+
+			<div class="col-xs-12" style="height: 10px;"></div>
+
+			<div class="col-xs-12">
+				<p class="text-center bold">Road Search</p>
+			</div>
+			<div class="col-xs-12 errorMsg" id="Road_error"></div>
+
+			<!-- Adding space between the title "Pipeline Information" and the buttons -->
+
+			<div class="col-xs-12" style="height: 10px;"></div>
+
+			<div class="form-group">
+				<div class="col-xs-6">
+					<input type="text" id="name_road" class="form-control" placeholder="Road Name">
+				</div>
+				<div class="col-xs-6">
+					<button id="findRoad" class="btn btn-primary btn-block">Find Road</button>
+				</div>
+			</div>
+
+			<div class="col-xs-12" style="height: 20px;"></div>
+
+			<div class="col-xs-12" id="road_information">
+				
+			</div>
+			
+		</div>
+	
+	</div>
 
 <script>
 	var baseLayers;
     var overlays = {};
     var roads_array = [];
     var roads;
+	var lyrSearch;
 
     var mymap = L.map('mapdiv', {
         center: [52.0061, 4.3702],
@@ -116,11 +152,9 @@
         roads.resetStyle(e.target);
     }
 
-    function zoomToFeature(e) {
+    function SelectFeature(e) {
         var layer = e.target;
         var att = layer.feature.properties;
-
-        mymap.fitBounds(layer.getBounds());
 
         layer.bindPopup(
             "Road ID: " + att.fid +
@@ -137,7 +171,7 @@
         layer.on({
             mouseover: highlightFeature,
             mouseout: resetHighlight,
-            click: zoomToFeature
+            click: SelectFeature
         });
     }
 
@@ -147,6 +181,55 @@
     }).addTo(mymap);
 
     control_layers.addOverlay(roads, "OSM roads");   
+	
+	$("#findRoad").click(function(){
+		var name_road = $("#name_road").val();
+
+		var lyr = returnLayerByAttribute(roads, "name", name_road);
+
+		if (lyr) {
+			var att = lyr.feature.properties;
+
+			if (lyrSearch) {
+				lyrSearch.remove();
+			}
+
+			// Before the leaflet object, we need to convert the layer into GeoJSON.
+
+			lyrSearch = L.geoJSON(lyr.toGeoJSON(), {style:{color:'red', weight:10, opacity:0.5}}).addTo(mymap);
+
+			mymap.fitBounds(lyr.getBounds());
+			roads.bringToFront();
+
+			$("#road_information").html("Road ID: "+att.fid+"<br>Name: "+att.name);
+		} else {
+			$("#name_error").html("Road not found!");
+		}
+
+	});
+	
+	//GENERAL FUNCTIONS
+	function returnLayerByAttribute(layer, attribute_name, attribute_value) {
+
+		// console.log(layer);
+
+		var all_layers = layer.getLayers();
+		// console.log(all_layers);
+
+		// [0].feature.properties
+
+		for (var i=0; i<all_layers.length; i++) {
+			var retained_value = all_layers[i].feature.properties[attribute_name];
+
+			// console.log(retained_value);
+
+			if (retained_value == attribute_value) {
+				return all_layers[i];
+			}
+		}
+
+		return false;
+	}
 	
 </script>
 
