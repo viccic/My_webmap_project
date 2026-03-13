@@ -52,11 +52,11 @@
 
     <div id="sidebar" class="col-md-3"></div>
 
-    <script>
-    var baseLayers;
-    var overlays;
-	
-	var roads_array = [];
+<script>
+	var baseLayers;
+    var overlays = {};
+    var roads_array = [];
+    var roads;
 
     var mymap = L.map('mapdiv', {
         center: [52.0061, 4.3702],
@@ -71,11 +71,13 @@
     var OpenTopoMap = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', { maxZoom: 23 });
 
     openStreetMap.addTo(mymap);
-	
-	//MOUSE POSITION
-	L.control.mousePosition({position:'bottomright'}).addTo(mymap);
 
-	//SIDEBAR
+    L.control.scale({
+        position: 'bottomleft',
+        maxWidth: 200,
+        imperial: false
+    }).addTo(mymap);
+
     var sidebar = L.control.sidebar('sidebar', { position: 'left' });
     mymap.addControl(sidebar);
 
@@ -91,32 +93,61 @@
     };
 
     var control_layers = L.control.layers(baseLayers, overlays).addTo(mymap);
-	
-	function style_roads(feature) {
+
+    function style_roads(feature) {
         return {
             color: '#17202A',
             weight: 4
         };
     }
+
+    function highlightFeature(e) {
+        var layer = e.target;
+
+        layer.setStyle({
+            color: '#6baed6',
+            weight: 6
+        });
+
+        layer.bringToFront();
+    }
+
+    function resetHighlight(e) {
+        roads.resetStyle(e.target);
+    }
+
+    function zoomToFeature(e) {
+        var layer = e.target;
+        var att = layer.feature.properties;
+
+        mymap.fitBounds(layer.getBounds());
+
+        layer.bindPopup(
+            "Road ID: " + att.fid +
+            "<br>Name: " + att.name +
+            "<br>Length (m): " + Math.round(att.length * 1000)/1000
+        ).openPopup();
+    }
+
+    function interaction(feature, layer) {
+        var att = feature.properties;
+
+        roads_array.push(att.fid);
+
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetHighlight,
+            click: zoomToFeature
+        });
+    }
+
+    roads = new L.GeoJSON.AJAX('data/StreetsInDelft_roadnetwork.geojson', {
+        style: style_roads,
+        onEachFeature: interaction
+    }).addTo(mymap);
+
+    control_layers.addOverlay(roads, "OSM roads");   
 	
-	function process_roads(json, lyr) {
-	
-		//console.log(json);
-		//console.log(lyr);
-
-		var att = json.properties;
-		console.log(att);
-	
-		roads_array.push(att.fid);
-
-		lyr.bindPopup("Road ID: "+att.fid+"<br>Name: "+att.name+"<br>Max Speed: "+att.maxspeed+"<br>Length: "+att.length);
-		}
-		
-
-    var roads = L.geoJSON.ajax('data/StreetsInDelft_roadnetwork.geojson',{style:style_roads, onEachFeature:process_roads}).addTo(mymap);
-
-       		
-	control_layers.addOverlay(roads, "OSM roads");
 </script>
 
 </body>
