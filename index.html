@@ -66,13 +66,8 @@
         });
 
 
-
         // Making the map appear
 
-        var GoogleStreets = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
-                                maxZoom: 23,
-                                subdomains:['mt0','mt1','mt2','mt3']
-                                });
 
         var openStreetMap =  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png?', {maxZoom:23});
 
@@ -86,7 +81,7 @@
                     maxZoom: 23
                 });
 
-        GoogleStreets.addTo(mymap);
+        openStreetMap.addTo(mymap);
 
 
         // Adding the following features into the map
@@ -103,7 +98,6 @@
 		
 		//LAYER CONTROL
 		baseLayers = {
-		    "Google Streets": GoogleStreets,
 		    "OSM": openStreetMap,
 		    "CartoDB Positron": CartoDB_Positron,
 		    "Esri Imagery": Esri_WorldImagery,
