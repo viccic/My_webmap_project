@@ -143,12 +143,14 @@
 
     openStreetMap.addTo(mymap);
 
+	//SCALE
     L.control.scale({
         position: 'bottomleft',
         maxWidth: 200,
         imperial: false
     }).addTo(mymap);
 
+	//SIDEBAR
     var sidebar = L.control.sidebar('sidebar', { position: 'left' });
     mymap.addControl(sidebar);
 
@@ -164,6 +166,17 @@
     };
 
     var control_layers = L.control.layers(baseLayers, overlays).addTo(mymap);
+	
+	//DRAW CONTROL OR GEOMAN
+		mymap.pm.addControls({  
+		  position: 'topleft',  
+		  drawCircleMarker: false,
+		  rotateMode: false,
+		});
+	
+	mymap.on("pm:create", function(e){
+			console.log(e);
+		});	
 	
 	// SEARCH ACCORDING TO NAME
 
