@@ -52,19 +52,19 @@
 
     <div id="sidebar" class="col-md-3">
 	
-	<!-- Road Part -->
-		<div id="divRoad" class="col-xs-12">
+	<!-- Road Name Part -->
+		<div id="divRoadName" class="col-xs-12">
 
-			<!-- Adding space above the title "Road Information" -->
+			<!-- Adding space above the title "Road Name Search" -->
 
 			<div class="col-xs-12" style="height: 10px;"></div>
 
 			<div class="col-xs-12">
-				<p class="text-center bold">Road Search</p>
+				<p class="text-center bold">Road Name Search</p>
 			</div>
-			<div class="col-xs-12 errorMsg" id="Road_error"></div>
+			<div class="col-xs-12 errorMsg" id="road_error"></div>
 
-			<!-- Adding space between the title "Pipeline Information" and the buttons -->
+			<!-- Adding space between the title "Road Name Search" and the buttons -->
 
 			<div class="col-xs-12" style="height: 10px;"></div>
 
@@ -73,13 +73,46 @@
 					<input type="text" id="name_road" class="form-control" placeholder="Road Name">
 				</div>
 				<div class="col-xs-6">
-					<button id="findRoad" class="btn btn-primary btn-block">Find Road</button>
+					<button id="SearchRoadName" class="btn btn-primary btn-block">Find Road</button>
 				</div>
 			</div>
 
 			<div class="col-xs-12" style="height: 20px;"></div>
 
-			<div class="col-xs-12" id="road_information">
+			<div class="col-xs-12" id="road_information_n">
+				
+			</div>
+			
+		</div>
+		
+	<!-- Road ID Part -->
+		<div id="divRoadID" class="col-xs-12">
+
+			<!-- Adding space above the title "Road ID Search" -->
+
+			<div class="col-xs-12" style="height: 10px;"></div>
+
+			<div class="col-xs-12">
+				<p class="text-center bold">Road ID Search</p>
+			</div>
+			<div class="col-xs-12 errorMsg" id="road_error"></div>
+
+			<!-- Adding space between the title "Road ID Search" and the buttons -->
+
+			<div class="col-xs-12" style="height: 10px;"></div>
+
+			<div class="form-group">
+				<div class="col-xs-6">
+					<input type="text" id="id_road" class="form-control" placeholder="Road ID">
+				</div>
+				<div class="col-xs-6">
+					<button id="SearchRoadID" class="btn btn-primary btn-block">Find Road</button>
+				</div>
+			</div>
+
+			<div class="col-xs-12" style="height: 20px;"></div>
+
+			<div class="col-xs-12" id="road_information_i">
 				
 			</div>
 			
@@ -92,7 +125,9 @@
     var overlays = {};
     var roads_array = [];
     var roads;
-	var lyrSearch;
+	var selected_roads;
+	var lyrSearch_n;
+	var lyrSearch_i;
 
     var mymap = L.map('mapdiv', {
         center: [52.0061, 4.3702],
@@ -129,6 +164,8 @@
     };
 
     var control_layers = L.control.layers(baseLayers, overlays).addTo(mymap);
+	
+	// SEARCH ACCORDING TO NAME
 
     function style_roads(feature) {
         return {
@@ -151,6 +188,18 @@
     function resetHighlight(e) {
         roads.resetStyle(e.target);
     }
+	
+	function resetRedHighlight(e) {
+        var layer = e.target;
+
+        layer.setStyle({
+            color: 'red',
+			weight: 10,
+			opacity: 0.5
+        });
+
+        layer.bringToFront();
+    }
 
     function SelectFeature(e) {
         var layer = e.target;
@@ -163,7 +212,7 @@
         ).openPopup();
     }
 
-    function interaction(feature, layer) {
+    function interaction_1(feature, layer) {
         var att = feature.properties;
 
         roads_array.push(att.fid);
@@ -174,62 +223,152 @@
             click: SelectFeature
         });
     }
+	
+	 function interaction_2(feature, layer) {
+        var att = feature.properties;
+
+        roads_array.push(att.fid);
+
+        layer.on({
+            mouseover: highlightFeature,
+            mouseout: resetRedHighlight,
+            click: SelectFeature
+        });
+    }
 
     roads = new L.GeoJSON.AJAX('data/StreetsInDelft_roadnetwork.geojson', {
         style: style_roads,
-        onEachFeature: interaction
+        onEachFeature: interaction_1
     }).addTo(mymap);
 
     control_layers.addOverlay(roads, "OSM roads");   
 	
-	$("#findRoad").click(function(){
+	$("#SearchRoadName").click(function () {
 		var name_road = $("#name_road").val();
+		var lyr_n = returnLayerByAttribute_n(roads, "name", name_road);
 
-		var lyr = returnLayerByAttribute(roads, "name", name_road);
+		if (lyr_n) {
+			var group = L.featureGroup(lyr_n);
+			var list_id = [];
+			var selectedFeatures = [];
 
-		if (lyr) {
-			var att = lyr.feature.properties;
+			if (lyrSearch_n) {
+				mymap.removeLayer(lyrSearch_n);
+			}
+			
+			if (selected_roads) {
+				mymap.removeLayer(selected_roads);
+			}
 
-			if (lyrSearch) {
-				lyrSearch.remove();
+			mymap.fitBounds(group.getBounds());
+			roads.bringToFront();
+
+			for (var i = 0; i < lyr_n.length; i++) {
+				var att = lyr_n[i].feature.properties;
+				list_id.push(att.fid);
+				selectedFeatures.push(lyr_n[i].toGeoJSON());
+			}
+
+			selected_roads = L.geoJSON(selectedFeatures, {
+				style: {
+					color: 'red',
+					weight: 10,
+					opacity: 0.5
+				},
+				onEachFeature: interaction_2
+			}).addTo(mymap);
+			
+			var att_first = lyr_n[0].feature.properties;
+
+			$("#road_information_n").html(
+				"Road ID(s): " + list_id.join(", ") + "<br>Name: " + att_first.name
+			);
+
+			$("#name_error").html("");
+		} else {
+			$("#name_error").html("Road not found!");
+			$("#road_information_n").html("");
+
+			//if (lyrSearch) {
+				//mymap.removeLayer(lyrSearch);
+			//}
+
+			//if (selected_roads) {
+				//mymap.removeLayer(selected_roads);
+			//}
+		}
+	});
+	
+	// SEARCH ACCORDING TO ID
+	$("#SearchRoadID").click(function () {
+		var id_road = $("#id_road").val();
+		var lyr_i = returnLayerByAttribute_i(roads, "fid", id_road);
+	
+		if (lyr_i) {
+			var att = lyr_i.feature.properties;
+
+			if (lyrSearch_i) {
+				lyrSearch_i.remove();
 			}
 
 			// Before the leaflet object, we need to convert the layer into GeoJSON.
 
-			lyrSearch = L.geoJSON(lyr.toGeoJSON(), {style:{color:'red', weight:10, opacity:0.5}}).addTo(mymap);
+			lyrSearch_i = L.geoJSON(lyr_i.toGeoJSON(), {style:{color:'green', weight:10, opacity:0.5}}).addTo(mymap);
 
-			mymap.fitBounds(lyr.getBounds());
+			mymap.fitBounds(lyr_i.getBounds());
 			roads.bringToFront();
 
-			$("#road_information").html("Road ID: "+att.fid+"<br>Name: "+att.name);
+			$("#road_information_i").html("Road ID: " + att.fid +
+            "<br>Name: " + att.name +
+            "<br>Length (m): " + Math.round(att.length * 1000)/1000);
 		} else {
-			$("#name_error").html("Road not found!");
+			$("#road_error").html("Road not found!");
 		}
 
 	});
-	
-	//GENERAL FUNCTIONS
-	function returnLayerByAttribute(layer, attribute_name, attribute_value) {
 
-		// console.log(layer);
-
+	// GENERAL FUNCTIONS
+	function returnLayerByAttribute_n(layer, attribute_name, attribute_value) {
 		var all_layers = layer.getLayers();
-		// console.log(all_layers);
+		var road_list = [];
 
-		// [0].feature.properties
+		for (var i = 0; i < all_layers.length; i++) {
+			var name_value = all_layers[i].feature.properties[attribute_name];
 
-		for (var i=0; i<all_layers.length; i++) {
-			var retained_value = all_layers[i].feature.properties[attribute_name];
-
-			// console.log(retained_value);
-
-			if (retained_value == attribute_value) {
-				return all_layers[i];
+			if (name_value == attribute_value) {
+				road_list.push(all_layers[i]);
 			}
+		}
+
+		if (road_list.length > 0) {
+			return road_list;
 		}
 
 		return false;
 	}
+
+	function returnLayerByAttribute_i(layer, attribute_name, attribute_value) {
+
+			// console.log(layer);
+
+			var all_layers = layer.getLayers();
+			// console.log(all_layers);
+
+			// [0].feature.properties
+
+			for (var i=0; i<all_layers.length; i++) {
+				var retained_value = all_layers[i].feature.properties[attribute_name];
+
+				// console.log(retained_value);
+
+				if (retained_value == attribute_value) {
+					return all_layers[i];
+				}
+			}
+
+			return false;
+		}
+
 	
 </script>
 
